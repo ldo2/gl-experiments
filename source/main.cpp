@@ -89,6 +89,33 @@ const GLfloat CubeBuilder::cubeFaces[6][5][3] = {
 	{{-0.5, -0.5, -0.5}, {1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, { 0.0,  0.0, -1.0}, {5.0, 0.0, 0.0}}
 };
 
+class SphereBuilder : public CubeBuilder {
+public:
+	SphereBuilder(int width, int height) : 
+		CubeBuilder(width, height) 
+	{
+	}
+	
+protected:
+	virtual void evalVertex(GLfloat (&vertex)[4], GLfloat x, GLfloat y) {
+		CubeBuilder::evalVertex(vertex, x, y);
+		GLfloat length = sqrt(vertex[0] * vertex[0] + 
+				vertex[1] * vertex[1] + vertex[2] * vertex[2]);
+		vertex[0] /= length;
+		vertex[1] /= length;
+		vertex[2] /= length;
+	}
+	
+	virtual void evalNormal(GLfloat (&normal)[3], GLfloat x, GLfloat y) {
+		GLfloat vertex[4];
+		evalVertex(vertex, x, y);
+		
+		normal[0] = vertex[0];
+		normal[1] = vertex[1];
+		normal[2] = vertex[2];
+	}
+};
+
 class MyApplication : public GlutApplication {
 public:
 	MyApplication(int argc, char *argv[]) : 
@@ -107,7 +134,7 @@ public:
 		
 		camera.setZoom(5.0);
 		
-		CubeBuilder builder(16, 16);
+		SphereBuilder builder(16, 16);
 		builder.build(model, GlModel::ALL_BUFFERS_BITS);
 	}
 	

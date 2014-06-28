@@ -1,5 +1,7 @@
 #include "GlMeshBuilder.hpp"
 
+#include <iostream>
+
 GlMeshBuilder::GlMeshBuilder(int width, int height) : 
 	theWidth(width), theHeight(height),
 	indices((width - 1) * (height - 1) * 6),
@@ -13,9 +15,16 @@ GlMeshBuilder::~GlMeshBuilder() {
 }
 	
 void GlMeshBuilder::build(GlModel& model, int mask) {
-	generateIndices();
-	generateVerticesAttributes();
+	generateModel();
+	buildModel(model, mask);
+}
 
+void GlMeshBuilder::generateModel() {
+	generateIndices(theWidth, theHeight);
+	generateVerticesAttributes(theWidth, theHeight);
+}
+
+void GlMeshBuilder::buildModel(GlModel& model, int mask) {
 	if (mask & GlModel::INDEX_BUFFER_BIT) {
 		buildIndices(model);
 	}
@@ -31,30 +40,30 @@ void GlMeshBuilder::build(GlModel& model, int mask) {
 	model.setMask(mask);
 }
 	
-void GlMeshBuilder::generateIndices() {
-    int i, j, k = 0;
+void GlMeshBuilder::generateIndices(int width, int height, int offset, int indexOffset) {
+    int i, j, k = offset;
 
-	for (i = 0; i < theWidth - 1; ++i) {
-		for (j = 0; j < theHeight - 1; ++j) {
-			indices.at(k++)[0] = (i * theHeight + j);
-			indices.at(k++)[0] = (i * theHeight + j + 1);
-			indices.at(k++)[0] = ((i + 1) * theHeight + j);
+	for (i = 0; i < width - 1; ++i) {
+		for (j = 0; j < height - 1; ++j) {
+			indices.at(k++)[0] = indexOffset + (i * height + j);
+			indices.at(k++)[0] = indexOffset + (i * height + j + 1);
+			indices.at(k++)[0] = indexOffset + ((i + 1) * height + j);
 				
-			indices.at(k++)[0] = (i * theHeight + j + 1);
-			indices.at(k++)[0] = ((i + 1) * theHeight + j);
-			indices.at(k++)[0] = ((i + 1) * theHeight + j + 1);
+			indices.at(k++)[0] = indexOffset + (i * height + j + 1);
+			indices.at(k++)[0] = indexOffset + ((i + 1) * height + j);
+			indices.at(k++)[0] = indexOffset + ((i + 1) * height + j + 1);
 		}
 	}
 }
 	
-void GlMeshBuilder::generateVerticesAttributes() {
-	int i, j, k = 0;
+void GlMeshBuilder::generateVerticesAttributes(int width, int height, int offset) {
+	int i, j, k = offset;
 	GLfloat x, y;
         
-	for (i = 0; i < theWidth; ++i) {
-		for (j = 0; j < theHeight; ++j) {
-			x = GLfloat(j)/(theHeight - 1);
-			y = GLfloat(i)/(theWidth - 1);
+	for (i = 0; i < width; ++i) {
+		for (j = 0; j < height; ++j) {
+			x = GLfloat(j)/(height - 1);
+			y = GLfloat(i)/(width - 1);
 
 			evalVertex(vertices.at(k), x, y);
 			evalNormal(normals.at(k), x, y);
@@ -64,7 +73,7 @@ void GlMeshBuilder::generateVerticesAttributes() {
 		} 
 	}
 }
-	
+
 void GlMeshBuilder::evalVertex(GLfloat (&vertex)[4], GLfloat x, GLfloat y) {
 	vertex[0] = x - 0.5;
 	vertex[1] = y - 0.5;

@@ -14,15 +14,20 @@ public:
 	virtual void build(GlModel& model, int mask);
 	
 protected:
-	void generateIndices();
+	virtual void generateModel();
+
+	void generateIndices(int width, int height, 
+			int offset = 0, int indexOffset = 0);
 	
-	void generateVerticesAttributes();
+	void generateVerticesAttributes(int width, int height, int offset = 0);
 	
 	virtual void evalVertex(GLfloat (&vertex)[4], GLfloat x, GLfloat y);
 	
 	virtual void evalNormal(GLfloat (&normal)[3], GLfloat x, GLfloat y);
 	
 	virtual void evalTexCoord(GLfloat (&texcoord)[4], GLfloat x, GLfloat y);
+	
+	void buildModel(GlModel& model, int mask);
 	
 	void buildIndices(GlModel& model);
 	

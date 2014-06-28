@@ -98,6 +98,10 @@ public:
 	
 protected:
 	virtual void evalVertex(GLfloat (&vertex)[4], GLfloat x, GLfloat y) {
+		// uniform distribution for points
+		x = 0.5*tan((0.5*x - 0.25)*M_PI) + 0.5;
+		y = 0.5*tan((0.5*y - 0.25)*M_PI) + 0.5;
+	
 		CubeBuilder::evalVertex(vertex, x, y);
 		GLfloat length = sqrt(vertex[0] * vertex[0] + 
 				vertex[1] * vertex[1] + vertex[2] * vertex[2]);

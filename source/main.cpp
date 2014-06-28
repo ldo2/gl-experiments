@@ -3,12 +3,15 @@
 
 #include "GlutApplication.hpp"
 #include "TrivialGlCamera.hpp"
+#include "GlModel.hpp"
+#include "GlMeshBuilder.hpp"
 
 class MyApplication : public GlutApplication {
 public:
 	MyApplication(int argc, char *argv[]) : 
 		GlutApplication(argc, argv, "OpenGL application"), 
-		camera(1.0), polygoneMode(GL_FILL)
+		camera(1.0), polygoneMode(GL_FILL), 
+		model(GlModel::ALL_BUFFERS_BITS)
 	{	
 		glEnable(GL_DEPTH_TEST);
 		glClearDepth(1.0);
@@ -20,6 +23,9 @@ public:
 		glViewport(0, 0, width(), height());
 		
 		camera.setZoom(5.0);
+		
+		GlMeshBuilder builder(16, 16);
+		builder.build(model, GlModel::ALL_BUFFERS_BITS);
 	}
 	
 	virtual ~MyApplication() {
@@ -53,7 +59,7 @@ protected:
 		setLight();
 
 		glPolygonMode(GL_FRONT_AND_BACK, polygoneMode);
-		glutSolidCube(1.0);
+		model.draw();
 
 		glFlush();
 		glutSwapBuffers();
@@ -93,6 +99,8 @@ protected:
 private:	
 	TrivialGlCamera camera;
 	GLenum polygoneMode;
+	
+	GlModel model;
 	
 	GLdouble aspectRatio() const {
 		return GLdouble(width())/GLdouble(height());

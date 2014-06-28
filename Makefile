@@ -43,7 +43,8 @@ ALL_DIRS = $(BUILD_DIR)
 SOURCES = main
 SOURCES += OpenGL
 SOURCES += GlutApplication
-
+SOURCES += GlModel
+SOURCES += GlMeshBuilder
 
 # Application objects
 OBJECTS =  $(patsubst %, $(BUILD_DIR)%.o, $(SOURCES))
